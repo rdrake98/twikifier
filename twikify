@@ -18,8 +18,8 @@ var http = require('http')
 var url = require('url');
 
 // reference our local libraries
-var createWikifier = require('./twikifier.js').createWikifier;
-var twik = require('./twik.js');
+var createWikifier = require('./twikifier').createWikifier;
+var twik = require('./twik');
 
 
 // read data to create text and pass to formatText
@@ -102,5 +102,5 @@ var main = function() {
     }
 }
 
-if (module.parent === null)
+if (!module.parent)
     main();
