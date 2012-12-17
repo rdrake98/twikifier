@@ -18,7 +18,7 @@ twik.loadRemoteTiddlers = function(store, Tiddler, uri, jsonTiddlers) {
     var tiddlers = JSON.parse(jsonTiddlers);
     for (var i = 0; i < tiddlers.length ; i++) {
         var t = new Tiddler(tiddlers[i].title);
-        t.text = tiddlers[i].text;
+        //t.text = tiddlers[i].text;
         t.tags = tiddlers[i].tags;
         t.modifier = tiddlers[i].modifier;
         t.modified = Date.convertFromYYYYMMDDHHMM(tiddlers[i].modified)
@@ -27,7 +27,8 @@ twik.loadRemoteTiddlers = function(store, Tiddler, uri, jsonTiddlers) {
         store.addTiddler(t);
     }
     storeURL = new Tiddler('SiteUrl');
-    storeURL.text = uri + '/%0';
+    storeURL.text = uri;
+    storeURL.tags = ['excludeLists'];
     store.addTiddler(storeURL);
 }
 

@@ -15,16 +15,49 @@ some HTML output.
 
 # How
 
-(The below is for OS X but should transliterate to other environments.)
+(The below is for OS X but should transliterate to other environments.  It has also been tested on Ubuntu 12.04)
 
 Install node.js and its package manager npm. If you are using brew that
 goes like this:
 
     brew install node npm
 
-One you have npm, install jsdom, htmlparser, jquery and tav
+One you have npm, install jsdom, htmlparser, jQuery (case sensitive), tav, location, navigator and xmlhttprequest
 
-    npm install jsdom htmlparser jquery tav
+    npm install net url jsdom@0.2.15 htmlparser jQuery tav location navigator xmlhttprequest
+
+If you want to use server.js you also need:
+
+    npm install memcached@0.0.10 hashlib node-uuid
+
+hashlib may fail to install on your machine.  If this is the case then manually install it via [this link](https://github.com/brainfucker/hashlib#install).
+
+Node modules can cause headaches when runtime problems are encountered.  Below is a dependency tree that is proven to work:
+
+    ├── htmlparser@1.7.6
+    ├── jQuery@1.7.4
+    ├─┬ jsdom@0.2.15
+    │ ├─┬ contextify@0.1.3
+    │ │ └── bindings@1.0.0
+    │ ├── cssom@0.2.5
+    │ └─┬ request@2.11.4
+    │   ├─┬ form-data@0.0.3
+    │   │ ├── async@0.1.9
+    │   │ └─┬ combined-stream@0.0.3
+    │   │   └── delayed-stream@0.0.5
+    │   └── mime@1.2.7
+    ├── location@0.0.1
+    ├─┬ memcached@0.0.10
+    │ └─┬ hashring@0.0.6
+    │   └── bisection@0.0.2
+    ├── navigator@1.0.1
+    ├── net@1.0.0
+    ├── node-uuid@1.3.3
+    ├── tav@0.1.0
+    ├─┬ url@0.7.9
+    │ ├── punycode@1.0.0
+    │ └── querystring@0.1.0
+    └── xmlhttprequest@1.4.2
 
 Make sure you set `NODE_PATH`:
 
@@ -40,11 +73,11 @@ runs all the files in the test directory against twikifier.
 
 You can try your own wikitext by piping data into twikify on STDIN:
 
-    ./twikify <url for tiddler collection> < /tmp/mysampledata.txt
+    ./twikify --collection=<url for tiddler collection> < /tmp/mysampledata.txt
 
 or by giving the names of multiple files on the command line:
 
-    ./twikify <url for tiddler collection> /tmp/mysampledata.txt \
+    ./twikify --collection=<url for tiddler collection> /tmp/mysampledata.txt \
         /tmp/someotherdata.txt
 
 `<url for tiddler collection>` should be replaced with the url of a collection
@@ -54,6 +87,24 @@ of tiddlers, in JSON, as found in TiddlyWeb. Things like:
     http://cdent-test7.tiddlyspace.com/recipes/cdent-test7_public/tiddlers
 
 As the tool develops there will be other interfaces.
+
+# Use with TiddlyWeb and Tiddlyspace
+
+Copy twikified.py into the folder where the instance is running.
+
+Add 'twikified' to the list of system plugins in tiddlywebconfig.py.
+
+Run the twikifier server:
+
+    ./twikifier_server
+
+Or:
+
+    node server.js
+
+Then start TiddlyWeb/Tiddlyspace
+
+If you have connection problems after a restart, remove `/tmp/wst.sock` and try again.
 
 # Why
 
@@ -89,15 +140,15 @@ too much so instead: What follows has less explanation than it could.
 
 `Wikifier.js` requires the global `formatter`, a `Formatter` from `FormatterHelpers.js`.
 
-`FormatterHelpers.js` requires the global `config`, from `Config.js`, which requires the `navigator` global, which `twikifier` stubs in.
+`FormatterHelpers.js` requires the global `config`, from `Config.js`.
 
 A `Formatter` needs formatters, which are in `config` and defined in `Formatter.js`.
 
 `Formatter.js` requires `FormatterHelper.js`, creating a cycle.
 
-`Wikifier.js` requires global `createTiddlyText()`, from `Dom.js`.
+`Wikifier.js` requires global `createTiddlyText()`, from `Utilities.js`.
 
-`Wikifier.js` requires global `createTiddlyElement()`, from `Dom.js`.
+`Wikifier.js` requires global `createTiddlyElement()`, from `Utilities.js`.
 
 `Formatter.js`, to format links, requires global `createTiddlyLink()` from `Utilities.js`.
 
@@ -134,6 +185,8 @@ needs two things:
 
 * To present a web service or local socket that takes an input (a text
   string, a tiddler bag/title combo?) and returns the generated HTML.
+
+Packaging this up as a node module would also be of use.
 
 # Who
 

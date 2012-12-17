@@ -1,5 +1,4 @@
-#!/usr/local/bin/node
-
+#!/usr/bin/env node
 
 var opts = require('tav').set({
     collection: {
@@ -12,7 +11,7 @@ var opts = require('tav').set({
 // require the jsdom and jquery libraries, via NODE_PATH
 // (probably /usr/local/lib/node if you are using npm)
 var jsdom = require('jsdom');
-var jquery = require('jquery');
+var jquery = require('jQuery');
 var fs = require('fs');
 var http = require('http')
 var url = require('url');
@@ -61,9 +60,10 @@ var processdata = function(window, wikify) {
     }
 }
 
-// make the came go
+// make the game go
 var main = function() {
     // create a window in which we host a dom
+    var uri = opts.collection;
     var window = jsdom.jsdom(
             '<html><head></head><body><div id="tiddler"></div></body></html>'
         ).createWindow(); 
@@ -71,12 +71,11 @@ var main = function() {
     // jquery-ize the window
     var jQuery = jquery.create(window);
     // Create formatter for the window.
-    var globals = createWikifier(window, jQuery);
+    var globals = createWikifier(window, jQuery, {container: uri});
     var wikify = globals[0];
     var store = globals[1];
     var Tiddler = globals[2];
 
-    var uri = opts.collection
     if (uri) {
         var parsed_uri = url.parse(uri);
 

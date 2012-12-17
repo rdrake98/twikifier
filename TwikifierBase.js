@@ -1,18 +1,15 @@
 // create a function scope (this is closed in another file)
-var createWikifier = function(window, jQuery) {
+var createWikifier = function(window, jQuery, passedServerOptions) {
+    var serverOptions = {
+        'host': 'http://tiddlyspace.com',
+        'container': null
+    };
+    if (typeof passedServerOptions === 'undefed') {
+        passedServerOptions = {};
+    }
+    jQuery.extend(serverOptions, passedServerOptions);
 
 /*** psuedo-globals required to get rolling ***/
-
-// the version macro needs this
-var version = {
-    major: 0,
-    minor: 1,
-    revision: 0,
-    extensions: {}
-};
-
-// config.js won't process without a navigator
-var navigator = { userAgent: "twikifier" };  
 
 // XXX TiddlyWiki requires a document global, rather than
 // being passed that document in startup.
@@ -29,15 +26,15 @@ var story = {
     findContainingTiddler: function(e) { return e; }
 };
 
+// XXX the highlightHack variable is used by the function 
+// highlightify which is rather irrelevant in this context
+// annoyingly it is used in Story.js and Macros.js but defined in main.js
+var highlightHack = null;
+
 // provide a stubbed alert in case something calls it
 function alert(e) {
     console.log(e);
 }
 
-// for lingo.js to work
-function saveChanges(onlyIfDirty,tiddlers) { return; }
-
-// copied from Dom.js
-function addClass(e,className) {
-    jQuery(e).addClass(className);
-}
+// config.browser (used in FormatterHelpers) requires navigator
+var navigator = { userAgent: "twikifier" };  
